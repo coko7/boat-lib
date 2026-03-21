@@ -64,31 +64,34 @@ where
 mod tests {
     use std::collections::HashSet;
 
-    use super::*;
     use crate::{
-        activity::{ActivityDefinition, ActivityLog},
+        models::{Activity, TrackingEntry},
+        repository::RepositoryItem,
         utils,
     };
 
+    use super::*;
+
     #[test]
-    fn test_parse_activity_logs_csv() -> Result<()> {
+    fn test_parse_tracking_csv() -> Result<()> {
         utils::init_test_logger();
         assert_eq!(
-            vec![ActivityLog {
+            vec![TrackingEntry {
                 id: "27e28d2ac61f35f7".to_string(),
+                activity_id: "e6468a7c866eb71c".to_string(),
                 start: utils::parse_local_dt("2026-03-16 08:00:00")?,
                 end: Some(utils::parse_local_dt("2026-03-16 09:30:00")?),
             }],
-            deserialize::<ActivityLog>(
-                "id;start;end
-27e28d2ac61f35f7;2026-03-16T08:00:00+01:00;2026-03-16T09:30:00+01:00"
+            deserialize::<TrackingEntry>(
+                "id;activity_id;start;end
+27e28d2ac61f35f7;e6468a7c866eb71c;2026-03-16T08:00:00+01:00;2026-03-16T09:30:00+01:00"
             )?
         );
         Ok(())
     }
 
     #[test]
-    fn test_parse_activity_definitions_csv() -> Result<()> {
+    fn test_parse_activities_csv() -> Result<()> {
         utils::init_test_logger();
         let mut tags = HashSet::new();
         tags.insert("code".to_string());
@@ -96,31 +99,18 @@ mod tests {
 
         assert_eq!(
             vec![
-                ActivityDefinition {
-                    id: "1e702a61b5c30021".to_string(),
-                    parent_id: None,
-                    name: "take out trash".to_string(),
-                    tags: HashSet::new(),
-                },
-                ActivityDefinition {
-                    id: "979f13ada1031e05".to_string(),
-                    parent_id: Some("2588c8f8ac72af67".to_string()),
-                    name: "cook pasta".to_string(),
-                    tags: HashSet::new(),
-                },
-                ActivityDefinition {
-                    id: "bc7272ea7045d136".to_string(),
-                    parent_id: Some("7a6e4e2b4b094661".to_string()),
-                    name: "work on csv parser".to_string(),
-                    tags
-                }
+                Activity::new("take out trash").set_id_fluent("1e702a61b5c30021".to_string()),
+                Activity::new("cook pasta").set_id_fluent("2588c8f8ac72af67".to_string()),
+                Activity::new("work on csv parser")
+                    .set_id_fluent("bc7272ea7045d136".to_string())
+                    .set_tags(tags)
             ],
             // TODO: handle duplicate activity IDss
-            deserialize::<ActivityDefinition>(
-                "id;parent_id;name;tags
-1e702a61b5c30021;;take out trash;
-979f13ada1031e05;2588c8f8ac72af67;cook pasta;
-bc7272ea7045d136;7a6e4e2b4b094661;work on csv parser;cli|code"
+            deserialize::<Activity>(
+                "id;name;project;description;tags
+1e702a61b5c30021;take out trash;;;
+2588c8f8ac72af67;cook pasta;;;
+bc7272ea7045d136;work on csv parser;;;cli|code"
             )?
         );
         Ok(())

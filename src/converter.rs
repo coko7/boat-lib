@@ -2,7 +2,7 @@ use anyhow::{Context, Result, bail};
 use log::warn;
 use std::collections::HashMap;
 
-use crate::activity::{ActId, Activity, ActivityDefinition, ActivityLog};
+use crate::activity::{self, ActId, Activity, ActivityDefinition, ActivityLog};
 
 pub fn recreate_activities(
     definitions: Vec<ActivityDefinition>,

@@ -3,8 +3,6 @@ use chrono::{DateTime, Local, NaiveDateTime, TimeZone};
 use rand::{RngExt, distr::Alphanumeric};
 use std::hash::{DefaultHasher, Hasher};
 
-use crate::activity::ActId;
-
 /// Parses naive datetime string to local timezone.
 /// Handles DST gaps/folds by picking earliest valid.
 pub fn parse_local_dt(s: &str) -> Result<DateTime<Local>> {
@@ -17,7 +15,7 @@ pub fn parse_local_dt(s: &str) -> Result<DateTime<Local>> {
         .context("invalid local time (e.g., DST gap)")
 }
 
-pub fn generate_rand_hash() -> ActId {
+pub fn generate_rand_hash() -> String {
     let random_input: String = rand::rng()
         .sample_iter(&Alphanumeric)
         .take(32)

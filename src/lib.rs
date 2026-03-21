@@ -1,6 +1,5 @@
-pub mod activity;
-pub mod converter;
 pub mod csv_io;
+pub mod models;
 pub mod repository;
-pub mod store;
+pub mod tracker;
 pub mod utils;
