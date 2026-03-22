@@ -1,9 +1,7 @@
 use anyhow::Result;
 use std::fmt::Debug;
 
-pub mod file_repository;
-
-pub type Id = String;
+pub type Id = i64;
 
 pub trait Repository<T: RepositoryItem>: Debug {
     fn create(&mut self, item: T) -> Result<Id>;
