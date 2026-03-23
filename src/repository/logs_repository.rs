@@ -11,8 +11,10 @@ pub fn create(conn: &Connection, new_log: NewLog) -> Result<Log> {
         "INSERT INTO logs (activity_id, starts_at, ends_at) VALUES (?1, ?2, ?3)",
         rusqlite::params![
             new_log.activity_id,
-            new_log.starts_at.to_rfc3339(),
-            new_log.ends_at.map(|t| t.to_rfc3339())
+            new_log.starts_at.format("%Y-%m-%d %H:%M:%S").to_string(),
+            new_log
+                .ends_at
+                .map(|t| t.format("%Y-%m-%d %H:%M:%S").to_string())
         ],
     )?;
 
@@ -107,7 +109,7 @@ pub fn recent_with_activities(conn: &Connection, limit: i64) -> Result<Vec<LogWi
 pub fn update_end(conn: &Connection, id: Id, ends_at: DateTime<Utc>) -> Result<()> {
     conn.execute(
         "UPDATE logs SET ends_at = ?1 WHERE id = ?2",
-        rusqlite::params![ends_at.to_rfc3339(), id],
+        rusqlite::params![ends_at.format("%Y-%m-%d %H:%M:%S").to_string(), id],
     )?;
     Ok(())
 }
